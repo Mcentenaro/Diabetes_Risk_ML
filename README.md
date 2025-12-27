@@ -61,7 +61,7 @@ Performance of the balanced random forest (brf) peaked when all features were us
 Subsequent steps were also performed using a reduced set of 15 features, since brf performance almost plateaued after that number of features, however, in the model selection step models trained on the reduced set of features consistently showed worse performance, ultimately leading to the full set of features to be used.  
 Considering the nature of the features, that are all answers to a questionnaire, and therefore very easy to obtain, there is no strong need to reduce the number of features except in the case of performance gain.  
 
-![feature sel](images/feature_sel.png)
+![feature sel](images/feature_sel.png)  
 *Fig 2: Feature selection results*  
 ##### 2. Model selection:
 Model selection process comprised of a number of substeps:  
