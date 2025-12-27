@@ -31,6 +31,9 @@ Exploratory data analysis revealed high class imbalance:
 
 Datasets have been divided into a training set, comprising 80% of the dataset, which corresponds to `202945` examples, and a testing set, comprosing 20% of the dataset which corresponds to `50735` examples. The testing set (also known as benchmark set) was only used to assess final model performance.  
 Training and benchmark set were created respecting the initial dataset class abundance.  
+
+![pie chart](images/grafico_torta.png)  
+*Fig 1: class imbalance pie chart*  
 ##### 2. Feature selection:  
 Recursive Feature Elimination strategy was employed for feature selection. As classifier, [Balanced Random Forest](https://imbalanced-learn.org/stable/references/generated/imblearn.ensemble.BalancedRandomForestClassifier.html) was used since standard Random Forest failed due to class imbalance.  
 ##### 3. Model selection:  
@@ -56,7 +59,10 @@ The final model was trained on the entire training set and it's performance eval
 Feature selection did not lead to a reduction of feature to be used on subsequent steps.  
 Performance of the balanced random forest (brf) peaked when all features were used.  
 Subsequent steps were also performed using a reduced set of 15 features, since brf performance almost plateaued after that number of features, however, in the model selection step models trained on the reduced set of features consistently showed worse performance, ultimately leading to the full set of features to be used.  
-Considering the nature of the features, that are all answers to a questionnaire, and therefore very easy to obtain, there is no strong need to reduce the number of features except in the case of performance gain. 
+Considering the nature of the features, that are all answers to a questionnaire, and therefore very easy to obtain, there is no strong need to reduce the number of features except in the case of performance gain.  
+
+![feature sel](images/feature_sel.png)
+*Fig 2: Feature selection results*  
 ##### 2. Model selection:
 Model selection process comprised of a number of substeps:  
 Firstly, I considered the multiclass problem of classifying healthy, prediabetes and diabetes.  
@@ -69,7 +75,11 @@ Models were evaluated based on their MCC and recall on the new binary problem. T
 At this step balanced random forest and easy ensemble were discarded, and the histogram gradient boosting and logistic regression models with probability threshold of 0.2 were chosen as potential first-step classifiers.  
 The last step was to select the second classifier, but for all models tested (balanced random forest , logistic regression, and histogram gradient boosting) was impossible to distinguish between the classess even after tuning the thresholds, indipendently of the classifier used to make first step classifications. High prediabetic recall was achieved with extremely low, sometimes even 0, specificity, meaning the only way the models had to achieve high recall on prediabetics was to label everyone as prediabetic.  
 Looking at these results, it is clear that the only feasable strategy was to create a binary classifier to predict healthy or disease.   
-The final classifier was chosen based on recall of disease class. The logistic regression classifier was chosed since it provided the highest recall of prediabetics as well as diabetics, at the cost of low specificity.  
+The final classifier was chosen based on recall of disease class. The logistic regression classifier was chosed since it provided the highest recall of prediabetics as well as diabetics, at the cost of low specificity.
+
+![class overlap](images/overlap.png)  
+*Fig 3: classification probability distribution of the final classifier on the benchmark set, it is apparent the high overlap between prediabetes and diabetes classes*  
+
 Logistic regression, given it's simplicity and low computational demands, is suited to be used for large scale predictions, for example in screening programs to select patients suitable for more expensive objective tests.  
 
 | Metric | Result |  
@@ -81,5 +91,9 @@ Logistic regression, given it's simplicity and low computational demands, is sui
 | `Prediabetes Misclassification Rate` | 0.06 |
 | `Diabetes Misclassification Rate` | 0.03 |
 | `False Positives / True Positives` | 3.5 |
+
+Confusion Matrix (benchmark set predictions):  
+
+![Confusion Matrix](images/confmat.png)
 
 Further analysis on false positive and false negative predicitons can be found in [script 7](https://github.com/Mcentenaro/Diabetes_Risk_ML/blob/main/7_final_prediction_and_plots.ipynb).
