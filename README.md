@@ -5,8 +5,10 @@
 # Diabetes prediction machine learning project
 This repository contains my project for the Applied Machine Learning course of the University of Bologna, Bioinformatics MSC.  
 ## Contents
-##### raw data and datasets
-- [raw data](./raw_datasets)
+##### datasets
+- [multiclass dataset](./raw_datasets/diabetes_012_health_indicators_BRFSS2015.csv)
+- [binary dataset](./raw_datasets/diabetes_binary_health_indicators_BRFSS2015.csv)
+- [balanced binary dataset](./raw_datasets/diabetes_binary_505split_health_indicators_BRFSS2015.csv)
 - [training features](./x_training.pkl)
 - [training y](./y_training.pkl)
 - [testing features](./x_benchmark.pkl)
@@ -34,7 +36,7 @@ Traditional diagnostic methods (blood tests, glucose tolerance tests) are invasi
 This project proposes a non-invasive, cost-effective alternative: leveraging behavioral and demographic data collected through annual telephone surveys to predict diabetes or prediabetes risk. The goal is not to replace clinical diagnosis, but to create an intelligent "first-line filter" that identifies at-risk individuals who require further medical attention.
 
 ### Data:
-data was retrieved from Kaggle at the following link: [kaggle](https://www.kaggle.com/datasets/alexteboul/diabetes-health-indicators-dataset) and it contains 253,680 survey responses from the 2015 Behavioral Risk Factor Surveillance System (BRFSS), a health-related telephone survey that is collected annually by the Centers for Disease Control and Prevention of the United States.  It is a multiclass dataset: class 0 = healthy, class 1 = prediabetes, class 2 = diabetes. More information about data itself can be found in the previous link.  
+data was retrieved from Kaggle at the following link: [kaggle](https://www.kaggle.com/datasets/alexteboul/diabetes-health-indicators-dataset) and it contains 253,680 survey responses from the 2015 Behavioral Risk Factor Surveillance System (BRFSS), a health-related telephone survey that is collected annually by the Centers for Disease Control and Prevention of the United States.  It is a multiclass dataset: class 0 = healthy, class 1 = prediabetes, class 2 = diabetes. More information about data itself can be found at the previous link.  
 
 ### Goal:  
 Originally the goal was to predict healty, prediabetes or diabetes using a single classifier, but data itself did not allow it since classes highly overlap. I therefore tried an hierarchical strategy employing a first classifier to distinguish between healthy (class 0) and disease (class 1 and class 2) transforming the problem from multiclass to binary, and then a second classifier to distinguish between prediabetes and diabetes. This strategy also failed since class 1 and class 2 cannot, at least with the classifiers that I choose, be distinguished.  
