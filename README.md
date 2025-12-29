@@ -39,7 +39,7 @@ This project proposes a non-invasive, cost-effective alternative: leveraging beh
 data was retrieved from Kaggle at the following link: [kaggle](https://www.kaggle.com/datasets/alexteboul/diabetes-health-indicators-dataset) and it contains 253,680 survey responses from the 2015 Behavioral Risk Factor Surveillance System (BRFSS), a health-related telephone survey that is collected annually by the Centers for Disease Control and Prevention of the United States.  It is a multiclass dataset: class 0 = healthy, class 1 = prediabetes, class 2 = diabetes. More information about data itself can be found at the previous link.  
 
 ### Goal:  
-Originally the goal was to predict healty, prediabetes or diabetes using a single classifier, but data itself did not allow it since classes highly overlap. I therefore tried an hierarchical strategy employing a first classifier to distinguish between healthy (class 0) and disease (class 1 and class 2) transforming the problem from multiclass to binary, and then a second classifier to distinguish between prediabetes and diabetes. This strategy also failed since class 1 and class 2 cannot, at least with the classifiers that I choose, be distinguished.  
+Originally the goal was to predict healty, prediabetes or diabetes using a single classifier, but data itself did not allow it since classes highly overlap. I therefore tried an hierarchical strategy employing a first classifier to distinguish between healthy (class 0) and disease (class 1 and class 2) transforming the problem from multiclass to binary, and then a second classifier to distinguish between prediabetes and diabetes and the remaining healthy. This strategy also failed since class 1 and class 2 cannot, at least with the classifiers that I choose, be distinguished.  
 Finally, I settled on a binary classifier to distinguish healthy and disease, maximising recall over balance, to deliver a classifier useful for screening purposes.  
 
 ### Methods:  
@@ -56,7 +56,7 @@ Exploratory data analysis revealed high class imbalance:
 | `Pre-diabetes` | 1 | 1.8% |
 | `Diabetes` | 2 | 13.9% |
 
-Datasets have been divided into a training set, comprising 80% of the dataset, which corresponds to `202945` examples, and a testing set, comprosing 20% of the dataset which corresponds to `50735` examples. The testing set (also known as benchmark set) was only used to assess final model performance.  
+Datasets have been divided into a training set, comprising 80% of the dataset, which corresponds to `202945` examples, and a testing set, comprising 20% of the dataset which corresponds to `50735` examples. The testing set (also known as benchmark set) was only used to assess final model performance.  
 Training and benchmark set were created respecting the initial dataset class abundance.  
 
 ![pie chart](./images/grafico_torta.png)  
@@ -91,18 +91,19 @@ Considering the nature of the features, that are all answers to a questionnaire,
 ![feature sel](./images/feature_sel.png)  
 *Fig 2: Feature selection results*  
 ##### 2. Model selection:
-Model selection process comprised of a number of substeps:  
+Model selection process comprised a number of substeps:  
 Firstly, I considered the multiclass problem of classifying healthy, prediabetes and diabetes.  
 Models were evaluated based on their MCC, recall and recall variance. Poor performers at this step (naive bayes methods and RUS Boost) were discarded, but it is important to note that all the models performed poorly, with an MCC always below 0.3, and prediabetic recall at around 2% to 3% for the best models.  
 Secondly, the problem was transformed from a multiclass problem to a binary problem. Class 1 and class 2 were fused into class 1, representing unhealthy patients.  
 The idea, given the initial struggles to predict 3 highly overlapping classes, was to create a 2-step classifier:  
-one to predict healthy or disease    
-one to predict prediabetic, diabetic or healthy, but only considering disease predictions from the first model.    
+1. one to predict healthy or disease --> to remove easy healthy cases so that diabetes and prediabetes class patterns would emerge with more strenght and to remove noise.  
+2. one to predict prediabetic, diabetic or healthy, but only considering disease predictions from the first model --> focusing on hard cases.
+    
 Models were evaluated based on their MCC and recall on the new binary problem. Threshold tuning was performed to maximize recall of prediabetics especially. The logic behind this choice is that, in a real case scenario is more important to detect prediabetics instead of diabetics since it is more likely that a person is prediabetic and does not know it, instead of being diabetic and not knowing it, since diabetes is a morbid medical condition that seldom goes unnoticed by the patient, while the same is not true for prediabetes.  
 At this step balanced random forest and easy ensemble were discarded, and the histogram gradient boosting and logistic regression models with probability threshold of 0.2 were chosen as potential first-step classifiers.  
 The last step was to select the second classifier, but for all models tested (balanced random forest , logistic regression, and histogram gradient boosting) was impossible to distinguish between the classess even after tuning the thresholds, indipendently of the classifier used to make first step classifications. High prediabetic recall was achieved with extremely low, sometimes even 0, specificity, meaning the only way the models had to achieve high recall on prediabetics was to label everyone as prediabetic.  
 Looking at these results, it is clear that the only feasable strategy was to create a binary classifier to predict healthy or disease.   
-The final classifier was chosen based on recall of disease class. The logistic regression classifier was chosed since it provided the highest recall of prediabetics as well as diabetics, at the cost of low specificity.
+The final classifier was chosen based on recall of disease class. The logistic regression classifier was chosen since it provided the highest recall of prediabetics as well as diabetics, at the cost of low specificity.  
 
 ![class overlap](./images/overlap.png)  
 *Fig 3: classification probability distribution of the final classifier on the benchmark set, it is apparent the high overlap between prediabetes and diabetes classes*  
